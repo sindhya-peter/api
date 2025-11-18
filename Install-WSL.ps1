@@ -1,13 +1,24 @@
-# Enable required features
-dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+# Install-WSL.ps1
+Set-ExecutionPolicy Bypass -Scope Process -Force
 
-# Install WSL (Store version) and default Ubuntu distro
-wsl --install -d Ubuntu
+# Enable required features (idempotent)
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart /quiet
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart /quiet
 
-# Optional: Set WSL2 as default
+# Check if WSL is already functional
+if (Get-Command wsl -ErrorAction SilentlyContinue) {
+    $installed = wsl --list --quiet
+    if ($installed) {
+        Write-Output "WSL already installed"
+        exit 0
+    }
+}
+
+# Install WSL + default Ubuntu (this pulls the Store version)
+wsl --install -d Ubuntu --web-download   # --web-download works around some Store blocks
+
+# Set WSL 2 as default (optional but recommended)
 wsl --set-default-version 2
 
-# Reboot recommended for full functionality
-# Exit 3010 triggers Intune reboot prompt
+# Request reboot
 exit 3010
