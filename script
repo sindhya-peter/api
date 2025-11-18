@@ -1,0 +1,5 @@
+IntuneWinAppUtil.exe ^
+  -c "C:\WSL-Deploy" ^
+  -s "Install-WSL.ps1" ^
+  -o "C:\WSL-Deploy\Output" ^
+  -q
